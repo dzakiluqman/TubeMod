@@ -10,10 +10,16 @@
     </form>
 
     <div class="preview-images">
-        <div class="card"></div>
-        <div class="card"></div>
-        <div class="card"></div>
+    <div class="card">
+        <img src="<?= BASEURL ?>/assets/image 2.png" alt="Analyze">
     </div>
+    <div class="card">
+        <img src="<?= BASEURL ?>/assets/image 3.png" alt="Toxic Detection">
+    </div>
+    <div class="card">
+        <img src="<?= BASEURL ?>/assets/image 4.png" alt="Moderation">
+    </div>
+</div>
 </section>
 
 <section class="trusted">
