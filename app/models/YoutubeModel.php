@@ -19,7 +19,7 @@ class YoutubeModel {
 
     public function fetchComments($videoId) {
 
-        $apiKey = "AIzaSyAyrBH68PIuQFuWADOSyEXFdpqajRPA_JE";
+        $apiKey = "API KEY";
         $comments = [];
 
         $apiUrl = "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=$videoId&maxResults=20&key=$apiKey";
