@@ -2,32 +2,45 @@
 
 class AuthController extends Controller {
 
-    public function login() {
+    public function login()
+    {
+        require_once '../app/config/google.php';
 
-        if (isset($_POST['login'])) {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
+        $login_url = $google_client->createAuthUrl();
 
-            $_SESSION['user'] = "admin";
+        $this->view('login', [
+            'login_url' => $login_url
+        ]);
+    }
+
+    public function googleCallback()
+    {
+        require_once '../app/config/google.php';
+
+        if(isset($_GET['code']))
+        {
+            $token = $google_client
+                ->fetchAccessTokenWithAuthCode($_GET['code']);
+
+            $google_client->setAccessToken($token['access_token']);
+
+            $service = new Google_Service_Oauth2($google_client);
+
+            $user = $service->userinfo->get();
+
+            $_SESSION['user'] = $user->email;
+            $_SESSION['name'] = $user->name;
+            $_SESSION['picture'] = $user->picture;
 
             header("Location: " . BASEURL . "/home");
             exit;
         }
-
-        $this->view('login');
     }
 
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $_SESSION = [];
-        session_unset();
         session_destroy();
-        setcookie(session_name(), '', time() - 3600, '/');
 
         header("Location: " . BASEURL . "/home");
         exit;
