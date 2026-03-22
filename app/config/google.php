@@ -11,3 +11,4 @@ $google_client->setRedirectUri(
 
 $google_client->addScope("email");
 $google_client->addScope("profile");
+$google_client->addScope("https://www.googleapis.com/auth/youtube.force-ssl");

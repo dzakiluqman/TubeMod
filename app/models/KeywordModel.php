@@ -1,32 +1,55 @@
 <?php
 
-require_once '../app/config/database.php';
-
 class KeywordModel {
 
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
+        require_once '../app/config/database.php';
         $this->conn = getConnection();
     }
 
-    public function getAll() {
-        return $this->conn->query("SELECT * FROM keywords ORDER BY id DESC");
-    }
-
-    public function insert($word, $category) {
-        $stmt = $this->conn->prepare("INSERT INTO keywords (word, category) VALUES (?, ?)");
-        $stmt->bind_param("ss", $word, $category);
+    // READ (by user)
+    public function getAllByUser($user_id)
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM keywords WHERE user_id = ? ORDER BY id DESC");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
+
+        return $stmt->get_result();
     }
 
-    public function delete($id) {
-        $this->conn->query("DELETE FROM keywords WHERE id=$id");
-    }
+    public function getByUser($user_id) {
 
-    public function update($id, $word, $category) {
-        $stmt = $this->conn->prepare("UPDATE keywords SET word=?, category=? WHERE id=?");
-        $stmt->bind_param("ssi", $word, $category, $id);
+        $stmt = $this->conn->prepare("SELECT * FROM keywords WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
+
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // CREATE
+    public function add($user_id, $word, $category)
+    {
+        $stmt = $this->conn->prepare("INSERT INTO keywords (user_id, word, category) VALUES (?, ?, ?)");
+        $stmt->bind_param("iss", $user_id, $word, $category);
+        return $stmt->execute();
+    }
+
+    // UPDATE
+    public function update($id, $user_id, $word, $category)
+    {
+        $stmt = $this->conn->prepare("UPDATE keywords SET word=?, category=? WHERE id=? AND user_id=?");
+        $stmt->bind_param("ssii", $word, $category, $id, $user_id);
+        return $stmt->execute();
+    }
+
+    // DELETE
+    public function delete($id, $user_id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM keywords WHERE id=? AND user_id=?");
+        $stmt->bind_param("ii", $id, $user_id);
+        return $stmt->execute();
     }
 }

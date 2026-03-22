@@ -22,7 +22,7 @@ $current = explode('/', $_GET['url'] ?? '')[0] ?? '';
     </a>
 
     <div class="nav-links">
-        <?php if (isset($_SESSION['user'])): ?>
+        <?php if (isset($_SESSION['user_id'])): ?>
             <a href="<?= BASEURL ?>/home" class="<?= $current == 'home' ? 'active' : '' ?>">Home</a>
             <a href="<?= BASEURL ?>/history" class="<?= $current == 'history' ? 'active' : '' ?>">History</a>
             <a href="<?= BASEURL ?>/keyword" class="<?= $current == 'keywords' ? 'active' : '' ?>">Keywords</a>
