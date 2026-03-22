@@ -2,22 +2,21 @@
 
 class HistoryController extends Controller {
 
-    public function index() {
-
-        if (!isset($_SESSION['user'])) {
-            header("Location: ../AuthController/login");
+    public function __construct()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASEURL . "/auth/login");
             exit;
         }
+    }
 
-        $dummy_videos = [
-            [
-                'id'=>1,
-                'title'=>'Review Gadget Paling Laku 2026!',
-                'youtube_url'=>'https://www.youtube.com/watch?v=contoh1',
-                'analyzed_at'=>'2026-02-25 10:30'
-            ]
-        ];
+    public function index()
+    {
+        $historyModel = $this->model('HistoryModel');
 
-        $this->view('history', ['dummy_videos'=>$dummy_videos]);
+        $data['history'] = $historyModel->getByUser($_SESSION['user_id']);
+
+        $this->view('history', $data);
+        $this->view('layouts/footer');
     }
 }

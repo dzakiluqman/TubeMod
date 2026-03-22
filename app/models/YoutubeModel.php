@@ -93,4 +93,19 @@ class YoutubeModel {
 
         return $response !== false;
     }
+
+    public function getVideoTitle($videoId)
+    {
+        $url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$videoId&key={$this->apiKey}";
+
+        $response = file_get_contents($url);
+
+        if (!$response) {
+            return 'Unknown Title';
+        }
+
+        $data = json_decode($response, true);
+
+        return $data['items'][0]['snippet']['title'] ?? 'Unknown Title';
+    }
 }
