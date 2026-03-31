@@ -5,12 +5,14 @@
 
     <!-- Filter Checkbox + Apply Button -->
     <div class="filter-wrapper" style="width: 700px; max-width: 100%; margin-top: 20px; align-items: center; gap: 10px;">
-        <label style="flex:1;">
-            <input type="checkbox" name="filter_non_original_fonts"
-                <?php if(!empty($_SESSION['filter_non_original_fonts'])) echo 'checked'; ?>>
-            Filter non-original YouTube fonts?
-        </label>
-        <button type="submit" class="btn-primary btn-small">Apply</button>
+        <form method="POST" action="<?= BASEURL ?>/keyword/save_filters" style="margin-top: 20px;">
+            <label>
+                <input type="checkbox" name="filter_non_original_fonts"
+                    <?php if(!empty($_SESSION['filter_non_original_fonts'])) echo 'checked'; ?>>
+                Filter non-original YouTube fonts?
+            </label>
+            <button type="submit" class="btn-primary btn-small">Apply</button>
+        </form>
     </div>
 
     <!-- Add Keyword Form -->
