@@ -66,4 +66,14 @@ class KeywordController extends Controller {
         header("Location: " . BASEURL . "/keyword");
         exit;
     }
+
+    // SAVE FILTER SESSION
+    public function save_filters()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $_SESSION['filter_non_original_fonts'] = isset($_POST['filter_non_original_fonts']);
+        }
+        header("Location: " . BASEURL . "/keyword");
+        exit;
+    }
 }

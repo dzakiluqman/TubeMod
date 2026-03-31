@@ -4,15 +4,12 @@ class AnalyzeController extends Controller {
 
     public function index() {
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $youtubeModel = $this->model('YoutubeModel');
             $keywordModel = $this->model('KeywordModel');
-            $filterModel = $this->model('FilterModel');
 
             $url = $_POST['youtube_url'];
-
-            // 🔥 ambil videoId dulu
             $videoId = $youtubeModel->getVideoId($url);
 
             if (!$videoId) {
@@ -20,40 +17,67 @@ class AnalyzeController extends Controller {
                 exit;
             }
 
-            // ambil komentar asli
+            // ambil semua komentar
             $allComments = $youtubeModel->getComments($url);
 
-            // ambil keyword user
-            $keywords = $keywordModel->getByUser($_SESSION['user_id']);
+            // ambil keyword user jika login
+            $keywords = [];
+            if (isset($_SESSION['user_id'])) {
+                $keywords = $keywordModel->getByUser($_SESSION['user_id']);
+            }
 
-            // filter komentar (toxic only)
-            $filteredComments = $filterModel->filterComments($allComments, $keywords);
+            // session-based filter font
+            $applyFontFilter = !empty($_SESSION['filter_non_original_fonts']);
 
-            // ambil title video
+            // tandai komentar toxic
+            $commentsWithFlag = [];
+            foreach ($allComments as $c) {
+                $isToxic = false;
+                $matched_keyword = '';
+                $category = '';
+
+                foreach ($keywords as $k) {
+                    if (stripos($c['text'], $k['word']) !== false) {
+                        $isToxic = true;
+                        $matched_keyword = $k['word'];
+                        $category = 'Keyword';
+                        break;
+                    }
+                }
+
+                // cek font non-original
+                if (!$isToxic && $applyFontFilter) {
+                    if ($this->isNonOriginalFont($c['text'])) {
+                        $isToxic = true;
+                        $matched_keyword = 'Non-original font';
+                        $category = 'Font';
+                    }
+                }
+
+                $c['is_toxic'] = $isToxic;
+                $c['matched_keyword'] = $matched_keyword;
+                $c['category'] = $category;
+
+                $commentsWithFlag[] = $c;
+            }
+
             $videoTitle = $youtubeModel->getVideoTitle($videoId);
 
-            // simpan data untuk history
             $_SESSION['analyze_data'] = [
                 'video_id' => $videoId,
                 'video_title' => $videoTitle,
                 'total_comments' => count($allComments)
             ];
 
-            // simpan komentar toxic untuk deleteAll
-            $_SESSION['comments_cache'] = $filteredComments;
+            $_SESSION['comments_cache'] = array_filter($commentsWithFlag, fn($c) => $c['is_toxic']);
+            $_SESSION['all_comments'] = $commentsWithFlag;
 
-            // cek ownership
             $isOwner = false;
             if (isset($_SESSION['access_token'])) {
                 $isOwner = $youtubeModel->isVideoOwner($videoId, $_SESSION['access_token']);
             }
 
-            $this->view('layouts/header');
-            $this->view('analyze', [
-                'comments' => $filteredComments,
-                'isOwner' => $isOwner
-            ]);
-            $this->view('layouts/footer');
+            $this->renderAnalyze(null, $isOwner);
 
         } else {
             header("Location: " . BASEURL . "/home");
@@ -63,28 +87,51 @@ class AnalyzeController extends Controller {
 
     public function delete($commentId)
     {
-        if (!isset($_SESSION['access_token'])) {
-            header("Location: " . BASEURL . "/home");
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASEURL . "/auth");
             exit;
         }
 
+        if (!isset($_SESSION['access_token'])) {
+            $this->renderAnalyze("Session expired, please login again.");
+            return;
+        }
+
         $youtubeModel = $this->model('YoutubeModel');
+        $success = $youtubeModel->deleteComment($commentId, $_SESSION['access_token']);
+        $message = "";
 
-        $success = $youtubeModel->deleteComment(
-            $commentId,
-            $_SESSION['access_token']
-        );
+        if ($success) {
+            if (isset($_SESSION['comments_cache'])) {
+                foreach ($_SESSION['comments_cache'] as $key => $c) {
+                    if ($c['id'] === $commentId) unset($_SESSION['comments_cache'][$key]);
+                }
+                $_SESSION['comments_cache'] = array_values($_SESSION['comments_cache']);
+            }
+            if (isset($_SESSION['all_comments'])) {
+                foreach ($_SESSION['all_comments'] as $key => $c) {
+                    if ($c['id'] === $commentId) unset($_SESSION['all_comments'][$key]);
+                }
+                $_SESSION['all_comments'] = array_values($_SESSION['all_comments']);
+            }
+            $message = "Deleted 1 comment.";
+        } else {
+            $message = "Failed to delete comment.";
+        }
 
-        // balik ke halaman sebelumnya
-        header("Location: " . $_SERVER['HTTP_REFERER']);
-        exit;
+        $this->renderAnalyze($message);
     }
 
     public function deleteAll()
     {
-        if (!isset($_SESSION['access_token'])) {
-            header("Location: " . BASEURL . "/home");
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASEURL . "/auth");
             exit;
+        }
+
+        if (!isset($_SESSION['access_token'])) {
+            $this->renderAnalyze("Session expired, please login again.");
+            return;
         }
 
         if (!isset($_SESSION['comments_cache'])) {
@@ -96,17 +143,30 @@ class AnalyzeController extends Controller {
         $historyModel = $this->model('HistoryModel');
 
         $deleted = 0;
+        $hidden = 0;
 
         foreach ($_SESSION['comments_cache'] as $c) {
             if (isset($c['id'])) {
-                $youtubeModel->deleteComment(
-                    $c['id'],
-                    $_SESSION['access_token']
-                );
+                $success = $youtubeModel->deleteComment($c['id'], $_SESSION['access_token']);
+                if ($success) $deleted++;
+                else $hidden++;
             }
         }
 
-        // simpan history
+        if (isset($_SESSION['all_comments'])) {
+            foreach ($_SESSION['comments_cache'] as $c) {
+                foreach ($_SESSION['all_comments'] as $key => $ac) {
+                    if ($ac['id'] === $c['id']) unset($_SESSION['all_comments'][$key]);
+                }
+            }
+            $_SESSION['all_comments'] = array_values($_SESSION['all_comments']);
+        }
+
+        $_SESSION['comments_cache'] = [];
+
+        $message = "Deleted $deleted comments";
+        if ($hidden > 0) $message .= " and Hiding $hidden comments";
+
         $historyModel->create([
             'user_id' => $_SESSION['user_id'],
             'video_id' => $_SESSION['analyze_data']['video_id'],
@@ -115,10 +175,26 @@ class AnalyzeController extends Controller {
             'deleted_comments' => $deleted
         ]);
 
-        // clear cache setelah delete
-        unset($_SESSION['comments_cache']);
+        $this->renderAnalyze($message);
+    }
 
-        header("Location: " . BASEURL . "/home");
-        exit;
+    private function renderAnalyze($message = null, $isOwner = true)
+    {
+        $comments = $_SESSION['all_comments'] ?? [];
+
+        $this->view('layouts/header');
+        $this->view('analyze', [
+            'comments' => $comments,
+            'isOwner' => $isOwner,
+            'isLoggedIn' => isset($_SESSION['user_id']),
+            'message' => $message
+        ]);
+        $this->view('layouts/footer');
+    }
+
+    // simple check non-original font
+    private function isNonOriginalFont($text)
+    {
+        return preg_match('/[^\x00-\x7F]/', $text);
     }
 }

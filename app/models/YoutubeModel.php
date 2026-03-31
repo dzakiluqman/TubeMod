@@ -21,8 +21,8 @@ class YoutubeModel {
         return null;
     }
 
-    public function getComments($url) {
-
+    public function getComments($url)
+    {
         $videoId = $this->getVideoId($url);
 
         if (!$videoId) {
@@ -32,21 +32,22 @@ class YoutubeModel {
         $apiUrl = "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=$videoId&maxResults=20&key={$this->apiKey}";
 
         $response = file_get_contents($apiUrl);
-
-        if (!$response) {
-            return [];
-        }
+        if (!$response) return [];
 
         $data = json_decode($response, true);
-
         $comments = [];
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
+
+                $top = $item['snippet']['topLevelComment'];
+
+                $commentId = $top['id'];
+
                 $comments[] = [
-                    'id' => $item['snippet']['topLevelComment']['id'],
-                    'author' => $item['snippet']['topLevelComment']['snippet']['authorDisplayName'],
-                    'text' => $item['snippet']['topLevelComment']['snippet']['textDisplay']
+                    'id' => $commentId,
+                    'author' => $top['snippet']['authorDisplayName'],
+                    'text' => $top['snippet']['textDisplay']
                 ];
             }
         }
@@ -54,44 +55,94 @@ class YoutubeModel {
         return $comments;
     }
 
-    public function isVideoOwner($videoId, $accessToken) {
+    public function isVideoOwner($videoId, $accessToken)
+    {
+        $urlChannel = "https://www.googleapis.com/youtube/v3/channels?part=id&mine=true";
 
-    $url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$videoId";
+        $opts = [
+            "http" => [
+                "header" => "Authorization: Bearer $accessToken",
+                "ignore_errors" => true
+            ]
+        ];
 
-    $opts = [
-        "http" => [
-            "header" => "Authorization: Bearer $accessToken"
-        ]
-    ];
+        $context = stream_context_create($opts);
+        $resChannel = file_get_contents($urlChannel, false, $context);
 
-    $context = stream_context_create($opts);
-    $response = file_get_contents($url, false, $context);
+        // handle error token
+        if (!$resChannel || strpos($http_response_header[0], '401') !== false) {
+            return false;
+        }
 
-    $data = json_decode($response, true);
+        $dataChannel = json_decode($resChannel, true);
 
-    if (!isset($data['items'][0])) return false;
+        if (!isset($dataChannel['items'][0]['id'])) return false;
 
-    $channelId = $data['items'][0]['snippet']['channelId'];
+        $myChannelId = $dataChannel['items'][0]['id'];
 
-    // bandingkan dengan channel user
-    return $channelId === $_SESSION['youtube_channel_id'];
+        // ambil channel pemilik video
+        $urlVideo = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$videoId&key={$this->apiKey}";
+        $resVideo = file_get_contents($urlVideo);
+        $dataVideo = json_decode($resVideo, true);
+
+        if (!isset($dataVideo['items'][0]['snippet']['channelId'])) return false;
+
+        $videoChannelId = $dataVideo['items'][0]['snippet']['channelId'];
+
+        return $myChannelId === $videoChannelId;
     }
 
     public function deleteComment($commentId, $accessToken)
     {
+        $commentId = trim($commentId);
+
         $url = "https://www.googleapis.com/youtube/v3/comments?id=$commentId";
 
         $opts = [
             "http" => [
                 "method" => "DELETE",
-                "header" => "Authorization: Bearer $accessToken"
+                "header" => "Authorization: Bearer $accessToken",
+                "ignore_errors" => true
             ]
         ];
 
         $context = stream_context_create($opts);
         $response = file_get_contents($url, false, $context);
 
-        return $response !== false;
+        // cek status
+        if (isset($http_response_header[0]) && strpos($http_response_header[0], '204') !== false) {
+            return true; // sukses delete
+        }
+
+        return $this->hideComment($commentId, $accessToken);
+    }
+
+    public function hideComment($commentId, $accessToken)
+    {
+        $url = "https://www.googleapis.com/youtube/v3/comments/setModerationStatus";
+
+        $data = [
+            "id" => $commentId,
+            "moderationStatus" => "rejected"
+        ];
+
+        $opts = [
+            "http" => [
+                "method" => "POST",
+                "header" => "Authorization: Bearer $accessToken\r\nContent-Type: application/json",
+                "content" => json_encode($data),
+                "ignore_errors" => true
+            ]
+        ];
+
+        $context = stream_context_create($opts);
+        $response = file_get_contents($url, false, $context);
+
+        if (isset($http_response_header[0]) && strpos($http_response_header[0], '200') !== false) {
+            return true;
+        }
+
+        return false;
     }
 
     public function getVideoTitle($videoId)

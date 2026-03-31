@@ -4,7 +4,7 @@
     <h1>One tool to manage toxic comments<br>in your YouTube channels.</h1>
     <p>Automatically analyze spam comments, online gambling, and hate speech.</p>
 
-    <form action="<?= BASEURL ?>/analyze" method="POST" class="search-form">
+    <form action="<?= BASEURL ?>/analyze" method="POST" class="search-form" style="margin-bottom: 50px;">
         <input type="text" name="youtube_url" placeholder="Insert a YouTube video URL" required>
         <button type="submit">Start Analyze</button>
     </form>
