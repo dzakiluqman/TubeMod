@@ -45,7 +45,6 @@ class AnalyzeController extends Controller {
                     }
                 }
 
-                // cek font non-original
                 if (!$isToxic && $applyFontFilter) {
                     if ($this->isNonOriginalFont($c['text'])) {
                         $isToxic = true;
@@ -141,10 +140,12 @@ class AnalyzeController extends Controller {
 
         $youtubeModel = $this->model('YoutubeModel');
         $historyModel = $this->model('HistoryModel');
+        $commentModel = $this->model('CommentModel');
 
         $deleted = 0;
         $hidden = 0;
 
+        // Hitung deleted/hidden
         foreach ($_SESSION['comments_cache'] as $c) {
             if (isset($c['id'])) {
                 $success = $youtubeModel->deleteComment($c['id'], $_SESSION['access_token']);
@@ -153,27 +154,37 @@ class AnalyzeController extends Controller {
             }
         }
 
-        if (isset($_SESSION['all_comments'])) {
-            foreach ($_SESSION['comments_cache'] as $c) {
-                foreach ($_SESSION['all_comments'] as $key => $ac) {
-                    if ($ac['id'] === $c['id']) unset($_SESSION['all_comments'][$key]);
-                }
-            }
-            $_SESSION['all_comments'] = array_values($_SESSION['all_comments']);
+        // Simpan komentar ke tabel comments sebelum session dihapus
+        $now = date('Y-m-d H:i:s');
+        foreach ($_SESSION['comments_cache'] as $c) {
+            $status = isset($c['deleted']) && $c['deleted'] ? 'deleted' : 'hidden';
+            $commentModel->create([
+                'video_id' => $_SESSION['analyze_data']['video_id'],
+                'author' => $c['author'] ?? '',
+                'comment_text' => $c['text'],
+                'category' => $c['category'] ?? '',
+                'status' => $status,
+                'deleted_at' => $now,
+                'created_at' => $now
+            ]);
         }
 
-        $_SESSION['comments_cache'] = [];
-
-        $message = "Deleted $deleted comments";
-        if ($hidden > 0) $message .= " and Hiding $hidden comments";
-
+        // Update history
         $historyModel->create([
             'user_id' => $_SESSION['user_id'],
             'video_id' => $_SESSION['analyze_data']['video_id'],
             'video_title' => $_SESSION['analyze_data']['video_title'],
             'total_comments' => $_SESSION['analyze_data']['total_comments'],
-            'deleted_comments' => $deleted
+            'deleted_comments' => $deleted,
+            'hidden_comments' => $hidden
         ]);
+
+        // Hapus session cache setelah disimpan
+        $_SESSION['all_comments'] = array_filter($_SESSION['all_comments'] ?? [], fn($c) => !($c['is_toxic'] ?? false));
+        $_SESSION['comments_cache'] = [];
+
+        $message = "Deleted $deleted comments";
+        if ($hidden > 0) $message .= " and Hiding $hidden comments";
 
         $this->renderAnalyze($message);
     }
@@ -192,7 +203,6 @@ class AnalyzeController extends Controller {
         $this->view('layouts/footer');
     }
 
-    // simple check non-original font
     private function isNonOriginalFont($text)
     {
         return preg_match('/[^\x00-\x7F]/', $text);

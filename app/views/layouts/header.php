@@ -25,7 +25,7 @@ $current = explode('/', $_GET['url'] ?? '')[0] ?? '';
         <?php if (isset($_SESSION['user_id'])): ?>
             <a href="<?= BASEURL ?>/home" class="<?= $current == 'home' ? 'active' : '' ?>">Home</a>
             <a href="<?= BASEURL ?>/history" class="<?= $current == 'history' ? 'active' : '' ?>">History</a>
-            <a href="<?= BASEURL ?>/keyword" class="<?= $current == 'keywords' ? 'active' : '' ?>">Keywords</a>
+            <a href="<?= BASEURL ?>/keyword" class="<?= $current == 'keyword' ? 'active' : '' ?>">Keywords</a>
             <a href="<?= BASEURL ?>/auth/logout">Logout</a>
         <?php else: ?>
             <a href="<?= BASEURL ?>/home">Home</a>
