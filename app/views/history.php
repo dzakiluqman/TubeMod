@@ -26,7 +26,7 @@
                     
                     <div class="card-actions">
                         <a onclick="openHistoryDetail('<?= $row['video_id'] ?>')" class="btn-update">Detail</a>
-                        <a href="#" class="delete-text">Delete</a>
+                        <a href="<?= BASEURL ?>/history/delete/<?= $row['id'] ?>" class="delete-text">Delete</a>
                     </div>
                 </div>
             <?php endforeach; ?>

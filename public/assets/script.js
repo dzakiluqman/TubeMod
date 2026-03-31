@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-    // Validating search-form
+    // Validate search form
     const searchForm = document.querySelector('.search-form');
     if (searchForm) {
         searchForm.addEventListener('submit', function(e) {
@@ -9,10 +9,10 @@ document.addEventListener("DOMContentLoaded", function() {
             
             if (inputUrl.trim() === '') {
                 e.preventDefault();
-                alert('URL YouTube tidak boleh kosong!');
+                alert('YouTube URL cannot be empty!');
             } else if (!inputUrl.includes('youtube.com') && !inputUrl.includes('youtu.be')) {
                 e.preventDefault();
-                alert('Harap masukkan URL YouTube yang valid!');
+                alert('Please enter a valid YouTube URL!');
             } else {
                 submitBtn.innerHTML = 'Analyzing...';
                 submitBtn.style.opacity = '0.7';
@@ -21,16 +21,15 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Confirm delete data (History, Keywords)
+    // Confirm before deleting data (History, Keywords)
     const deleteLinks = document.querySelectorAll('.delete-text, .btn-danger');
     deleteLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
-            const yakin = confirm("Apakah kamu yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.");
+            const confirmed = confirm("Are you sure you want to delete this data? This action cannot be undone.");
             
-            if (!yakin) {
+            if (!confirmed) {
                 e.preventDefault();
             }
         });
     });
-
 });

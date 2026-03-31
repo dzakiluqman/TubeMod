@@ -41,4 +41,22 @@ class HistoryController extends Controller {
             'comments' => $comments
         ]);
     }
+
+    public function delete($id)
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: " . BASEURL . "/auth/login");
+            exit;
+        }
+
+        $historyModel = $this->model('HistoryModel');
+
+        $success = $historyModel->deleteById($id, $_SESSION['user_id']);
+
+        if ($success) {
+            header("Location: " . BASEURL . "/history?message=Deleted successfully");
+        } else {
+            header("Location: " . BASEURL . "/history?message=Failed to delete");
+        }
+    }
 }

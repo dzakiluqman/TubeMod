@@ -56,4 +56,11 @@ class HistoryModel {
 
         return $stmt->get_result()->fetch_assoc();
     }
+
+    public function deleteById($id, $user_id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM history WHERE id = ? AND user_id = ?");
+        $stmt->bind_param("ii", $id, $user_id);
+        return $stmt->execute();
+    }
 }
