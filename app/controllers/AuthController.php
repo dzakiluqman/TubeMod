@@ -4,7 +4,7 @@ class AuthController extends Controller {
 
     public function login()
     {
-        require_once '../app/config/google.php';
+        require_once 'app/config/google.php';
 
         $login_url = $google_client->createAuthUrl();
 
@@ -15,8 +15,8 @@ class AuthController extends Controller {
 
     public function googleCallback()
     {
-        require_once '../app/config/google.php';
-        require_once '../app/models/UserModel.php';
+        require_once 'app/config/google.php';
+        require_once 'app/models/UserModel.php';
 
         if (isset($_GET['code'])) {
 
