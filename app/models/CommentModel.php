@@ -6,7 +6,7 @@ class CommentModel {
 
     public function __construct()
     {
-        require_once '../app/config/database.php';
+        require_once 'app/config/database.php';
         $this->conn = getConnection();
     }
 
