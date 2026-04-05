@@ -6,7 +6,7 @@ $google_client->setClientId('329943591388-mcgfa4ed24f6e7bi1doah1abpf3fhqal.apps.
 $google_client->setClientSecret('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');
 
 $google_client->setRedirectUri(
-    'http://localhost/TubeMod/public/auth/googleCallback'
+    BASEURL . '/auth/googleCallback'
 );
 
 $google_client->addScope("email");
