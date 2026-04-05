@@ -1,2 +1,2 @@
 <?php
-define('BASEURL', 'http://localhost/TubeMod');
+define('BASEURL', 'https://tubemod.infinityfreeapp.com');
