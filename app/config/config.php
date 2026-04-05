@@ -1,2 +1,2 @@
 <?php
-define('BASEURL', 'http://localhost/TubeMod/public');
+define('BASEURL', 'http://localhost/TubeMod');
