@@ -28,3 +28,8 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: /htdocs/
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github/**
+          **/.vscode/**
