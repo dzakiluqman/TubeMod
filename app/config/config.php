@@ -1,6 +1,6 @@
 <?php
 
-define('BASEURL', 'https://tubemod.infinityfreeapp.com');
+define('BASEURL', 'https://tubemod.online');
 
 define('DB_HOST', 'sql301.infinityfree.com');
 define('DB_USER', 'if0_41584981');
