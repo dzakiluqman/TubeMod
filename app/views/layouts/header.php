@@ -34,3 +34,15 @@ $current = explode('/', $_GET['url'] ?? '')[0] ?? '';
         <?php endif; ?>
     </div>
 </nav>
+
+<?php if (isset($_GET['error']) && $_GET['error'] == 'session_expired'): ?>
+<script>
+    alert("Your session has expired. Please log in again to continue.");
+    
+    if (typeof window.history.replaceState === 'function') {
+        const url = new URL(window.location);
+        url.searchParams.delete('error');
+        window.history.replaceState({}, '', url);
+    }
+</script>
+<?php endif; ?>

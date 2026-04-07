@@ -7,7 +7,7 @@ class KeywordController extends Controller {
     public function __construct()
     {
         if (!isset($_SESSION['user_id'])) {
-            header("Location: " . BASEURL . "/auth/login");
+            header('Location: ' . BASEURL . '/auth/login?error=session_expired');
             exit;
         }
 
