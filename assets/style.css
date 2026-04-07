@@ -645,3 +645,69 @@ footer {
 #commentsTable tbody tr:hover {
     background: rgba(255,255,255,0.08);
 }
+
+/* Logout Modal Overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); 
+    backdrop-filter: blur(2px);
+}
+
+.modal-box {
+    background-color: #fff;
+    margin: 15vh auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    font-family: Arial, sans-serif;
+}
+
+.modal-box h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.modal-box p {
+    color: #666;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-cancel {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    background: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-confirm {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 5px;
+    background: #d9534f;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-confirm:hover {
+    background: #c9302c;
+}
