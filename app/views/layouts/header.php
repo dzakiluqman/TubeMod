@@ -27,22 +27,10 @@ $current = explode('/', $_GET['url'] ?? '')[0] ?? '';
             <a href="<?= BASEURL ?>/home" class="<?= $current == 'home' ? 'active' : '' ?>">Home</a>
             <a href="<?= BASEURL ?>/history" class="<?= $current == 'history' ? 'active' : '' ?>">History</a>
             <a href="<?= BASEURL ?>/keyword" class="<?= $current == 'keyword' ? 'active' : '' ?>">Keywords</a>
-            
-            <a href="javascript:void(0)" onclick="openLogoutModal()">Logout</a>
+            <a href="<?= BASEURL ?>/auth/logout">Logout</a>
         <?php else: ?>
             <a href="<?= BASEURL ?>/home">Home</a>
             <a href="<?= BASEURL ?>/auth/login" class="btn-nav">Login</a>
         <?php endif; ?>
-    </div>
-
-    <div id="logoutModal" class="modal-overlay">
-        <div class="modal-box">
-            <h3>Are you sure?</h3>
-            <p>You are about to end your current session. You will need to login again to access your data.</p>
-            <div class="modal-buttons">
-                <button onclick="closeLogoutModal()" class="btn-cancel">Cancel</button>
-                <a href="<?= BASEURL ?>/auth/logout" class="btn-confirm">Yes, Logout</a>
-            </div>
-        </div>
     </div>
 </nav>

@@ -32,22 +32,4 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     });
-
-    // Function to show the modal
-    function openLogoutModal() {
-        document.getElementById('logoutModal').style.display = 'block';
-    }
-
-    // Function to hide the modal
-    function closeLogoutModal() {
-        document.getElementById('logoutModal').style.display = 'none';
-    }
-
-    // Close modal if user clicks anywhere outside the box
-    window.onclick = function(event) {
-        let modal = document.getElementById('logoutModal');
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
 });
