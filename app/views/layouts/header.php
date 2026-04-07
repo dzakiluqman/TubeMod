@@ -27,7 +27,7 @@ $current = explode('/', $_GET['url'] ?? '')[0] ?? '';
             <a href="<?= BASEURL ?>/home" class="<?= $current == 'home' ? 'active' : '' ?>">Home</a>
             <a href="<?= BASEURL ?>/history" class="<?= $current == 'history' ? 'active' : '' ?>">History</a>
             <a href="<?= BASEURL ?>/keyword" class="<?= $current == 'keyword' ? 'active' : '' ?>">Keywords</a>
-            <a href="<?= BASEURL ?>/auth/logout">Logout</a>
+            <a href="<?= BASEURL ?>/auth/logout" onclick="return confirm('Are you sure you want to logout?')">Logout</a>
         <?php else: ?>
             <a href="<?= BASEURL ?>/home">Home</a>
             <a href="<?= BASEURL ?>/auth/login" class="btn-nav">Login</a>
