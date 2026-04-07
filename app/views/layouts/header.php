@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
     <title>TubeMod</title>
     <link rel="stylesheet" href="<?= BASEURL ?>/assets/style.css">
     <script defer src="<?= BASEURL ?>/assets/script.js"></script>
+    <link rel="icon" type="image/png" href="<?= BASEURL; ?>/assets/logo.png">
 </head>
 <body>
 
