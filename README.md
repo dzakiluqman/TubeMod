@@ -16,10 +16,10 @@ TubeMod adalah aplikasi berbasis web yang dirancang khusus untuk membantu kreato
 * **⚡ Native & Fast:** Antarmuka dibangun menggunakan Native CSS dan Vanilla JS tanpa *dependency* berat, menjamin performa dan *loading* yang super cepat.
 
 ## 🛠️ Tech Stack
-* **Backend:** PHP 8.x (Custom MVC Architecture)
+* **Backend:** PHP 8.2 (Custom MVC Architecture)
 * **Frontend:** HTML5, Native CSS, Vanilla JavaScript
 * **API Integration:** YouTube Data API v3, Google OAuth 2.0
-* **Database:** MySQL / MariaDB
+* **Database:** MySQL
 
 ## 🗺️ Roadmap (Future Plans)
 Sistem ini akan terus dikembangkan untuk memberikan pengalaman moderasi terbaik. Beberapa rencana ke depan meliputi:
