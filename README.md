@@ -4,7 +4,7 @@
 
 🌐 **Live Website:** [tubemod.online](https://tubemod.online)
 
-![TubeMod Preview](https://via.placeholder.com/800x400.png?text=TubeMod+Dashboard+Preview) ## 📖 Tentang Sistem
+## 📖 Tentang Sistem
 
 TubeMod adalah aplikasi berbasis web yang dirancang khusus untuk membantu kreator konten YouTube dalam menjaga kebersihan ekosistem kolom komentar mereka. Dibangun dengan arsitektur **PHP MVC**, sistem ini mampu mendeteksi, menganalisis, dan menyaring komentar-komentar negatif secara otomatis menggunakan parameter kata kunci khusus tanpa mengganggu alur kerja kreator.
 
