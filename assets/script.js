@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const deleteLinks = document.querySelectorAll('.delete-text, .btn-danger');
     deleteLinks.forEach(function(link) {
         link.addEventListener('click', function(e) {
-            const confirmed = confirm("Are you sure you want to delete this data? This action cannot be undone.");
+            const confirmed = confirm("Delete this data permanently? This action cannot be undone.");
             
             if (!confirmed) {
                 e.preventDefault();
