@@ -29,6 +29,3 @@ Sistem ini akan terus dikembangkan untuk memberikan pengalaman moderasi terbaik.
 
 ## 📄 Lisensi
 Didistribusikan di bawah Lisensi MIT. Lihat `LICENSE` untuk informasi lebih lanjut.
-
----
-*Dibuat dengan ❤️ oleh [Nama Kamu/Username]*
