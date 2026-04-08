@@ -9,10 +9,6 @@
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
             Continue with Google
         </a>
-        
-        <form method="POST" action="<?= BASEURL ?>/auth/login">
-            <button name="login" class="hidden-login">bypass login</button>
-        </form>
     </div>
 </div>
 
