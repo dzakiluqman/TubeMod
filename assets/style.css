@@ -649,3 +649,7 @@ footer {
 html {
     scroll-behavior: smooth;
 }
+::selection {
+    background-color: var(--primary);
+    color: #ffffff;
+}
