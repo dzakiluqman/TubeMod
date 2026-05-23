@@ -2,8 +2,8 @@
 
 $google_client = new Google_Client();
 
-$google_client->setClientId('329943591388-mcgfa4ed24f6e7bi1doah1abpf3fhqal.apps.googleusercontent.com');
-$google_client->setClientSecret('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');
+$google_client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
+$google_client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
 
 $google_client->setRedirectUri(BASEURL . '/auth/googleCallback');
 

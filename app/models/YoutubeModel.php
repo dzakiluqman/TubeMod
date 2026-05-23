@@ -2,7 +2,11 @@
 
 class YoutubeModel {
 
-    private $apiKey = "AIzaSyAyrBH68PIuQFuWADOSyEXFdpqajRPA_JE";
+    private $apiKey;
+
+    public function __construct() {
+        $this->apiKey = $_ENV['YOUTUBE_API_KEY'];
+    }
 
     public function getVideoId($url) {
 

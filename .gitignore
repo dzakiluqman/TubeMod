@@ -1,5 +1,25 @@
+# Composer dependencies
 /vendor/
-.git/
-.github/
-.vscode/
+
+# Node dependencies
 node_modules/
+
+# Environment Variables 
+.env
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Log files
+*.log
+error_log
